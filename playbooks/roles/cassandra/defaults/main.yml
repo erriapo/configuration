@@ -1,0 +1,26 @@
+# file: cassandra/defaults/main.yml
+
+cassandra_version: "2.0.14"
+cassandra_source_url: "http://archive.apache.org/dist/cassandra/{{cassandra_version}}/apache-cassandra-{{cassandra_version}}-bin.tar.gz"
+
+cassandra_user: "cassandra"
+cassandra_group: "cassandra"
+
+cassandra_home: "{{COMMON_APP_DIR}}/{{cassandra_user}}"
+
+# cassandra-env.sh configuration parameters
+cassandra_max_heap_size: null
+cassandra_heap_newsize: null
+
+# cassandra.yaml basic configuration parameters
+cassandra_cluster_name: "Test Cluster"
+cassandra_listen_address: "localhost"
+cassandra_seeds: ["localhost"]
+
+cassandra_rpc_address: "localhost"
+
+#cassandra_snitch: "EC2Snitch"
+cassandra_snitch: "SimpleSnitch"
+
+#set this ONLY when initializing a new cluster with NO DATA
+bootstrap: false

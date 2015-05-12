@@ -1,0 +1,52 @@
+  # file: cassandra/tasks/main.yml
+
+- name: Cassandra | Make sure the cassandra group is present
+  group:
+    name: "{{cassandra_group}}"
+    state: present
+
+- name: Cassandra | Make sure the cassandra user is present
+  user:
+    name: "{{cassandra_user}}"
+    group: "{{cassandra_group}}"
+    home: "{{cassandra_home}}"
+    createhome: yes
+    shell: /bin/false
+
+- name: Cassandra | Make sure the cassandra user home has correct permissions
+  file:
+    path: "{{cassandra_home}}"
+    owner: "{{cassandra_user}}"
+    group: "{{cassandra_group}}"
+
+- name: Cassandra | Add the datastax repository apt-key
+  apt_key:
+    url: "http://debian.datastax.com/debian/repo_key"
+    state: present
+
+- name: Cassandra | Add the datastax repository
+  apt_repository:
+    repo: "deb http://debian.datastax.com/community stable main"
+    state: present
+
+- name: Cassandra | Install the cassandra package
+  apt:
+    name: "cassandra={{ cassandra_version }}"
+    state: present
+    update_cache: yes
+
+- name: Cassandra | Update the cassandra configuration
+  template:
+    src: "{{item}}.j2"
+    dest: "{{ COMMON_CFG_DIR }}/cassandra/{{item}}"
+    owner: "{{cassandra_user}}"
+    group: "{{cassandra_group}}"
+    mode: 0644
+  with_items:
+    - "cassandra-env.sh"
+    - "cassandra.yaml"
+
+- name: restart cassandra
+  service:
+    name: cassandra
+    state: restarted
